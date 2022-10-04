@@ -371,8 +371,15 @@ public class RBEFormattingPrefPage extends AbstractRBEPrefPage {
         convertUnicodeUpperCase.setEnabled(isEncodingUnicode);
         groupLevelDeep.setEnabled(isGroupKeyEnabled);
         groupLineBreaks.setEnabled(isGroupKeyEnabled);
-        groupAlignEqualSigns.setEnabled(
-                isGroupKeyEnabled && isAlignEqualsEnabled);
+
+        // GRO 2022.10.04 if field is not enabled, it should be unset
+        if (isGroupKeyEnabled && isAlignEqualsEnabled) {
+            groupAlignEqualSigns.setEnabled(true);
+        } else {
+            groupAlignEqualSigns.setSelection(false);
+            groupAlignEqualSigns.setEnabled(false);
+        }
+
         wrapCharLimit.setEnabled(isWrapEnabled);
         wrapAlignEqualSigns.setEnabled(isWrapEnabled);
         wrapIndentSpaces.setEnabled(isWrapEnabled && !isWrapAlignEqualsEnabled);
