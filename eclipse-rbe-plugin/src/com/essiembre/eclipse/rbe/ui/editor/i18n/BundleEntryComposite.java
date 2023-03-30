@@ -56,8 +56,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.texteditor.ITextEditor;
-
 import com.essiembre.eclipse.rbe.RBEPlugin;
 import com.essiembre.eclipse.rbe.model.bundle.BundleEntry;
 import com.essiembre.eclipse.rbe.model.bundle.BundleGroup;
@@ -239,7 +239,8 @@ public class BundleEntryComposite extends Composite {
             commentedCheckbox.setEnabled(!sourceEditor.isReadOnly());
             textBox.setEnabled(!sourceEditor.isReadOnly());
             textBox.setEditable(true);
-//            textBox.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+//          textBox.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+//          textBox.setBackground(getStandardTextEditorBackgroundColorFromRegistry());
             gotoButton.setEnabled(true);
             if (RBEPreferences.getReportDuplicateValues()) {
                 findDuplicates(bundleEntry);
@@ -260,7 +261,8 @@ public class BundleEntryComposite extends Composite {
             duplButton.setVisible(false);
             simButton.setVisible(false);
             textBox.setEditable(false);
-//            textBox.setBackground(new Color(getDisplay(), 245, 245, 245));
+//          textBox.setBackground(new Color(getDisplay(), 245, 245, 245));
+//          textBox.setBackground(getStandardTextEditorBackgroundColorFromRegistry());
         }
         
         textViewer.setDocument(document);        
@@ -535,8 +537,8 @@ public class BundleEntryComposite extends Composite {
      * Creates the text row.
      */
     private void createTextViewerRow() {
-//       int vscroll = RBEPreferences.getAutoAdjust() ? 0 : SWT.V_SCROLL;
-       textViewer = new TextViewer(this, SWT.MULTI | SWT.WRAP | SWT.H_SCROLL 
+//      int vscroll = RBEPreferences.getAutoAdjust() ? 0 : SWT.V_SCROLL;
+        textViewer = new TextViewer(this, SWT.MULTI | SWT.WRAP | SWT.H_SCROLL 
                | SWT.V_SCROLL | SWT.BORDER);
 
         textViewer.setDocument(new Document());
@@ -544,6 +546,8 @@ public class BundleEntryComposite extends Composite {
         textViewer.setUndoManager(undoManager);
         textViewer.activatePlugins();
         final StyledText textBox = textViewer.getTextWidget();
+        // Gro added 30.03.2023
+        textBox.setBackground(getStandardEditorBackgroundColorFromRegistry());
         
         textBox.setEnabled(false);
         // Addition by Eric FETTWEIS
@@ -882,6 +886,7 @@ public class BundleEntryComposite extends Composite {
     // GRO 30.09.2022
     // Default ID org.eclipse.ui.showkeys.foregroundColor
     // https://git.eclipse.org/c/platform/eclipse.platform.ui.git/tree/bundles/org.eclipse.ui/plugin.xml
+    // Defaults in Manifest to org.eclipse.jface.preference.JFacePreferences.INFORMATION_FOREGROUND_COLOR
     private Color getEditorTextColorFromRegistry() {
         ColorRegistry colorRegistry = PlatformUI.getWorkbench().getThemeManager()
             .getCurrentTheme().getColorRegistry();
@@ -890,10 +895,19 @@ public class BundleEntryComposite extends Composite {
 
     // GRO 30.09.2022
     // Default ID org.eclipse.jface.REVISION_NEWEST_COLOR
+    // Defaults in Manifest to org.eclipse.jface.preference.JFacePreferences.QUALIFIER_COLOR
     private Color getEditorTextColorCommentedFromRegistry() {
         ColorRegistry colorRegistry = PlatformUI.getWorkbench().getThemeManager()
             .getCurrentTheme().getColorRegistry();
         return colorRegistry.get("com.essiembre.eclipse.rbe.ui.preferences.textCommentedColorDefinition");
+    }
+
+    // GRO 28.03.2023
+    // Defaults in Manifest to org.eclipse.ui.internal.IWorkbenchThemeConstants.ACTIVE_TAB_BG_START
+    private Color getStandardEditorBackgroundColorFromRegistry() {
+        ColorRegistry colorRegistry = PlatformUI.getWorkbench().getThemeManager()
+            .getCurrentTheme().getColorRegistry();
+        return colorRegistry.get("com.essiembre.eclipse.rbe.ui.preferences.backgroundColorDefinition");
     }
 }
 

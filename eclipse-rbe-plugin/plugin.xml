@@ -105,5 +105,14 @@
           The text color for commented out texts in the editors on the properties tab
        </description>
     </colorDefinition>
+    <colorDefinition
+          categoryId="com.essiembre.eclipse.rbe.ui.preferences.themeElementCategory"
+          defaultsTo="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"
+          id="com.essiembre.eclipse.rbe.ui.preferences.backgroundColorDefinition"
+          label="Properties editor background color">
+       <description>
+          The background color for the editors properties tab
+       </description>
+    </colorDefinition>
   </extension>
 </plugin>
