@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
+Automatic-Module-Name: com.essiembre.eclipse.rbe
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: com.essiembre.eclipse.rbe;singleton:=true
-Bundle-Version: 1.0.7.qualifier
+Bundle-Version: 1.0.8.qualifier
 Bundle-Activator: com.essiembre.eclipse.rbe.RBEPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy

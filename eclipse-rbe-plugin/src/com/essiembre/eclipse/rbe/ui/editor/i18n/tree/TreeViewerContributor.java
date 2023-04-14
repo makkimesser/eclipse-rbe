@@ -37,7 +37,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.ui.PlatformUI;
 import com.essiembre.eclipse.rbe.RBEPlugin;
 import com.essiembre.eclipse.rbe.model.bundle.BundleGroup;
 import com.essiembre.eclipse.rbe.model.tree.KeyTree;
@@ -282,7 +282,7 @@ public class TreeViewerContributor {
         String key = selectedItem.getId();
         String msgHead = null;
         String msgBody = null;
-        if (selectedItem.getChildren().size() == 0) {
+        if (selectedItem.getChildren().isEmpty()) {
             msgHead = RBEPlugin.getString(
                     "dialog.rename.head.single");
             msgBody = RBEPlugin.getString(
@@ -306,7 +306,7 @@ public class TreeViewerContributor {
             items.addAll(selectedItem.getNestedChildren());
             for (Iterator<KeyTreeItem> iter = items.iterator(); 
                     iter.hasNext();) {
-                KeyTreeItem item = (KeyTreeItem) iter.next();
+                KeyTreeItem item = iter.next();
                 String oldItemKey = item.getId();
                 if (oldItemKey.startsWith(key)) {
                     String newItemKey = newKey 
@@ -328,7 +328,7 @@ public class TreeViewerContributor {
         items.add(selectedItem);
         items.addAll(selectedItem.getNestedChildren());
         for (Iterator<KeyTreeItem> iter = items.iterator(); iter.hasNext();) {
-            KeyTreeItem item = (KeyTreeItem) iter.next();
+            KeyTreeItem item = iter.next();
             bundleGroup.uncommentKey(item.getId());
         }
     }
@@ -342,7 +342,7 @@ public class TreeViewerContributor {
         String key = selectedItem.getId();
         String msgHead = null;
         String msgBody = null;
-        if (selectedItem.getChildren().size() == 0) {
+        if (selectedItem.getChildren().isEmpty()) {
             msgHead = RBEPlugin.getString(
                     "dialog.delete.head.single");
             msgBody = RBEPlugin.getString(
@@ -382,7 +382,7 @@ public class TreeViewerContributor {
         items.add(selectedItem);
         items.addAll(selectedItem.getNestedChildren());
         for (Iterator<KeyTreeItem> iter = items.iterator(); iter.hasNext();) {
-            KeyTreeItem item = (KeyTreeItem) iter.next();
+            KeyTreeItem item = iter.next();
             bundleGroup.commentKey(item.getId());
         }
 
@@ -397,7 +397,7 @@ public class TreeViewerContributor {
         String key = selectedItem.getId();
         String msgHead = null;
         String msgBody = null;
-        if (selectedItem.getChildren().size() == 0) {
+        if (selectedItem.getChildren().isEmpty()) {
             msgHead = RBEPlugin.getString(
                     "dialog.duplicate.head.single");
             msgBody = RBEPlugin.getString(
@@ -421,7 +421,7 @@ public class TreeViewerContributor {
             items.addAll(selectedItem.getNestedChildren());
             for (Iterator<KeyTreeItem> iter =
                     items.iterator(); iter.hasNext();) {
-                KeyTreeItem item = (KeyTreeItem) iter.next();
+                KeyTreeItem item = iter.next();
                 String origItemKey = item.getId();
                 if (origItemKey.startsWith(key)) {
                     String newItemKey =
@@ -456,8 +456,7 @@ public class TreeViewerContributor {
      * @return   The currently used Shell instance.
      */
     private Shell getShell() {
-        return(RBEPlugin.getDefault().getWorkbench()
-                .getActiveWorkbenchWindow().getShell());
+        return(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
     }
 
     
@@ -484,7 +483,7 @@ public class TreeViewerContributor {
             if(structuralupdater instanceof GroupedKeyTreeUpdater) {
                 if(RBEPreferences.getKeyTreeExpanded()) {
                     treeviewer.expandAll();
-                }            
+                }
             }
         } else if(action == KT_FLAT) {
             structuralupdater = new FlatKeyTreeUpdater(); 
@@ -492,7 +491,7 @@ public class TreeViewerContributor {
                 // we need to activate the filter
                 tree.setUpdater(new IncompletionUpdater(
                         tree.getBundleGroup(), structuralupdater)
-                );                
+                );
             } else {
                 tree.setUpdater(structuralupdater);
             }

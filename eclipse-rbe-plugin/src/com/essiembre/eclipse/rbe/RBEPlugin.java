@@ -50,6 +50,7 @@ public class RBEPlugin extends AbstractUIPlugin {
     /**
      * This method is called upon plug-in activation
      */
+    @SuppressWarnings("java:S2696")
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
@@ -60,6 +61,7 @@ public class RBEPlugin extends AbstractUIPlugin {
     /**
      * This method is called when the plug-in is stopped
      */
+    @SuppressWarnings("java:S2696")
     @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
@@ -81,8 +83,7 @@ public class RBEPlugin extends AbstractUIPlugin {
      * @return localized string corresponding to key
      */
     public static String getString(String key) {
-        ResourceBundle bundle = 
-                RBEPlugin.getDefault().getResourceBundle();
+        ResourceBundle bundle = RBEPlugin.getDefault().getResourceBundle();
         try {
             return (bundle != null) ? bundle.getString(key) : key;
         } catch (MissingResourceException e) {

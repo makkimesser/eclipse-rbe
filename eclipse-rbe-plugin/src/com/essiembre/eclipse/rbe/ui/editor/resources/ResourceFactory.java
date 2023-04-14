@@ -122,8 +122,8 @@ public abstract class ResourceFactory implements IResourceFactory {
         for (Iterator<SourceEditor> it = sourceEditors.values().iterator(); 
                 it.hasNext();) {
             Object obj = it.next();
-            if (obj instanceof SourceEditor) {
-                editors[i] = (SourceEditor) obj;
+            if (obj instanceof SourceEditor sourceEditor) {
+                editors[i] = sourceEditor;
             }
             i++;
         }
@@ -157,11 +157,11 @@ public abstract class ResourceFactory implements IResourceFactory {
         this.propertiesFileCreator = fileCreator;
     }
     
-    @Override
-    public abstract boolean isResponsible(IFile file) throws CoreException;
+    //@Override
+    //public abstract boolean isResponsible(IFile file) throws CoreException;
     
-    @Override
-    public abstract void init(IEditorSite site, IFile file) throws CoreException;
+    //@Override
+    //public abstract void init(IEditorSite site, IFile file) throws CoreException;
     
     
 //    /**
@@ -269,18 +269,14 @@ public abstract class ResourceFactory implements IResourceFactory {
         return locale;
     }
     
-    protected SourceEditor createEditor(
-            IEditorSite site, IResource resource, Locale locale)
-            throws PartInitException {
+    protected SourceEditor createEditor(IEditorSite site, IResource resource, Locale locale) throws PartInitException {
         
         ITextEditor textEditor = null;
-        if (resource != null && resource instanceof IFile) {
-            IEditorInput newEditorInput = 
-                    new FileEditorInput((IFile) resource);
+        if (resource instanceof IFile resourceFile) {
+            IEditorInput newEditorInput =  new FileEditorInput(resourceFile);
             try {
                 // Use PropertiesFileEditor if available
-                textEditor = (TextEditor) Class.forName(
-                        PROPERTIES_EDITOR_CLASS_NAME).newInstance();
+                textEditor = (TextEditor) Class.forName(PROPERTIES_EDITOR_CLASS_NAME).getConstructor().newInstance();
             } catch (Exception e) {
                 // Use default editor otherwise
                 textEditor = new TextEditor();
@@ -404,7 +400,7 @@ public abstract class ResourceFactory implements IResourceFactory {
                 validResources.add(resource);
             }
         }
-        return (IFile[]) validResources.toArray(new IFile[]{});
+        return validResources.toArray(new IFile[]{});
     }
     
 }

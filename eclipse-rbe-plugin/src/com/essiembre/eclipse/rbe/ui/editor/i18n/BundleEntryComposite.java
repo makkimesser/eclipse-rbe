@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.texteditor.ITextEditor;
 import com.essiembre.eclipse.rbe.RBEPlugin;
 import com.essiembre.eclipse.rbe.model.bundle.BundleEntry;
@@ -179,6 +178,7 @@ public class BundleEntryComposite extends Composite {
     /**
      * @see org.eclipse.swt.widgets.Widget#dispose()
      */
+    @Override
     public void dispose() {
         super.dispose();
         boldFont.dispose();
@@ -186,7 +186,7 @@ public class BundleEntryComposite extends Composite {
 
         //Addition by Eric Fettweis
         for(Iterator<Font> it = swtFontCache.values().iterator();it.hasNext();){
-            Font font = (Font) it.next();
+            Font font = it.next();
             font.dispose();
         }
         swtFontCache.clear();
@@ -286,7 +286,7 @@ public class BundleEntryComposite extends Composite {
         if (duplVisitor != null) {
             similarVisitor.getSimilars().removeAll(duplVisitor.getDuplicates());
         }
-        simButton.setVisible(similarVisitor.getSimilars().size() > 0);
+        simButton.setVisible(!similarVisitor.getSimilars().isEmpty());
     }
 
     private void findDuplicates(BundleEntry bundleEntry) {
@@ -296,7 +296,7 @@ public class BundleEntryComposite extends Composite {
         }
         duplVisitor.clear();
         bundleGroup.getBundle(locale).accept(duplVisitor, bundleEntry);
-        duplButton.setVisible(duplVisitor.getDuplicates().size() > 0);
+        duplButton.setVisible(!duplVisitor.getDuplicates().isEmpty());
     }
 
 
@@ -333,6 +333,7 @@ public class BundleEntryComposite extends Composite {
         simButton.setToolTipText(
                 RBEPlugin.getString("value.similar.tooltip"));
         simButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 String head = RBEPlugin.getString(
                         "dialog.similar.head");
@@ -360,15 +361,12 @@ public class BundleEntryComposite extends Composite {
                 RBEPlugin.getString("value.duplicate.tooltip"));
 
         duplButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
-                String head = RBEPlugin.getString(
-                        "dialog.identical.head");
-                String body = RBEPlugin.getString(
-                        "dialog.identical.body", activeKey,
-                        UIUtils.getDisplayName(locale));
+                String head = RBEPlugin.getString("dialog.identical.head");
+                String body = RBEPlugin.getString("dialog.identical.body", activeKey, UIUtils.getDisplayName(locale));
                 body += "\n\n";
-                for (Iterator<BundleEntry> iter = 
-                        duplVisitor.getDuplicates().iterator();
+                for (Iterator<BundleEntry> iter = duplVisitor.getDuplicates().iterator();
                 iter.hasNext();) {
                     body += "        " + iter.next().getKey() + "\n";
                 }
@@ -386,6 +384,7 @@ public class BundleEntryComposite extends Composite {
         commentedCheckbox.setFont(smallFont);
         commentedCheckbox.setLayoutData(gridData);
         commentedCheckbox.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 resetCommented();
                 updateBundleOnChanges();
@@ -409,21 +408,22 @@ public class BundleEntryComposite extends Composite {
                 RBEPlugin.getString("value.goto.tooltip"));
         gotoButton.setEnabled(false);
         gotoButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
                 ITextEditor editor = resourceManager.getSourceEditor(
                         locale).getEditor();
                 Object activeEditor = 
                     editor.getSite().getPage().getActiveEditor();
-                if (activeEditor instanceof ResourceBundleEditor) {
-                    ((ResourceBundleEditor) activeEditor).setActivePage(locale);
+                if (activeEditor instanceof ResourceBundleEditor resBundleEditor) {
+                    resBundleEditor.setActivePage(locale);
                 }
             }
         });
         gotoButton.setLayoutData(gridData);
     }
     
-    private Collection<FocusListener> focusListeners = 
-            new LinkedList<FocusListener>();
+    private Collection<FocusListener> focusListeners = new LinkedList<>();
+
     @Override
     public void addFocusListener(FocusListener listener) {
         if (!focusListeners.contains(listener))
@@ -604,6 +604,7 @@ public class BundleEntryComposite extends Composite {
         });
 
         textBox.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent event) {
                 if (isKeyCombination(event, SWT.CTRL, 'z')) {
                     undoManager.undo();
@@ -635,13 +636,13 @@ public class BundleEntryComposite extends Composite {
         // Eric Fettweis : new listener to automatically change the font 
         textViewer.addTextListener(new ITextListener() {
            
-           String _oldText=null;
+           String oldText=null;
 
            @Override
            public void textChanged( TextEvent event ) {
               String text = textBox.getText();
-              if(text.equals(_oldText)) return;
-              _oldText=text;
+              if(text.equals(oldText)) return;
+              oldText=text;
               
               Font f = textBox.getFont();
               String fontName = getBestFont(f.getFontData()[0].getName(), text);
@@ -755,8 +756,8 @@ public class BundleEntryComposite extends Composite {
      * @return a font with the same style and size as the original.
      */
     private Font getSWTFont(Font baseFont, String name){
-        Font font = (Font) swtFontCache.get(name);
-        if(font==null){
+        Font font = swtFontCache.get(name);
+        if(font == null){
             font = createFont(baseFont, getDisplay(), name);
             swtFontCache.put(name, font);
         }
@@ -794,19 +795,18 @@ public class BundleEntryComposite extends Composite {
     }
 
    private static String[] getAvailableFontNames() {
-      if ( _fontFamilyNames == null ) {
-         String[] fontFamilyNames = GraphicsEnvironment
-                 .getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-         _fontFamilyNames = fontFamilyNames;
+      if ( fontFamilyNames == null ) {
+         String[] names = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+         fontFamilyNames = names;
       }
-      return _fontFamilyNames;
+      return fontFamilyNames;
    }
 
    /**
      * A cache holding an instance of every AWT font tested.
      */
     private static Map<String, java.awt.Font> awtFontCache = new HashMap<>();
-    private static String[] _fontFamilyNames;
+    private static String[] fontFamilyNames;
 
     /**
      * Creates a variation from an original font, by changing the face name.
@@ -853,12 +853,14 @@ public class BundleEntryComposite extends Composite {
      * @return an AWT Font
      */
     private static java.awt.Font getAWTFont(String name){
-        java.awt.Font font = (java.awt.Font) awtFontCache.get(name);
-        if(font==null){
-            font = new java.awt.Font(name, java.awt.Font.PLAIN, 12);
-            awtFontCache.put(name, font);
-        }
-        return font;
+
+//        java.awt.Font font = awtFontCache.get(name);
+//        if(font==null){
+//            font = new java.awt.Font(name, java.awt.Font.PLAIN, 12);
+//            awtFontCache.put(name, font);
+//        }
+//        return font;
+        return awtFontCache.computeIfAbsent(name, n -> new java.awt.Font(n, java.awt.Font.PLAIN, 12));
     }
 
     /**

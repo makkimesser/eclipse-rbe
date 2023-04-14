@@ -47,27 +47,29 @@ public class ResourceFactoryDescriptor {
      * @return
      * @throws CoreException
      */
-    public static IResourceFactory[] getContributedResourceFactories() 
-            throws CoreException {
-        ResourceFactoryDescriptor[] descriptors = 
-                getContributedResourceFactoryDescriptors();
+    public static IResourceFactory[] getContributedResourceFactories() throws CoreException {
+
+        ResourceFactoryDescriptor[] descriptors =  getContributedResourceFactoryDescriptors();
         SortedMap<Integer, Object> factories = new TreeMap<>();
-        for (int i = 0, lastOrder = 0; i < descriptors.length; i++) {
-            Object factory = descriptors[i].fElement.createExecutableExtension(
-                    "class");
+
+        int lastOrder = 0;
+        for (int i = 0; i < descriptors.length; i++) {
+            Object factory = descriptors[i].fElement.createExecutableExtension("class");
             String attribute = descriptors[i].fElement.getAttribute("order");
             Integer order = null;
             try {
-                order = new Integer(attribute);
+                order = Integer.valueOf(attribute);
             } catch (Exception e) {
-                order = new Integer(++lastOrder);
+                order = Integer.valueOf(++lastOrder);
             }
-            while (factories.containsKey(order))
-                order = new Integer(lastOrder = order.intValue());
+            while (factories.containsKey(order)) {
+                lastOrder = order.intValue();
+                order = Integer.valueOf(lastOrder);
+            }
             factories.put(order, factory);
         }
-        return (IResourceFactory[]) factories.values().toArray(
-                new IResourceFactory[factories.values().size()]);
+
+        return factories.values().toArray(new IResourceFactory[factories.values().size()]);
     }
 
     private static ResourceFactoryDescriptor[] 
@@ -88,8 +90,7 @@ public class ResourceFactoryDescriptor {
                 list.add(descriptor);
             }
         }
-        return (ResourceFactoryDescriptor[]) list.toArray(
-                new ResourceFactoryDescriptor[list.size()]);
+        return list.toArray(new ResourceFactoryDescriptor[list.size()]);
     }
 
 }

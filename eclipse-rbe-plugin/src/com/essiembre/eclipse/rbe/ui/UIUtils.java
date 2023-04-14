@@ -32,7 +32,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.ui.PlatformUI;
 import com.essiembre.eclipse.rbe.RBEPlugin;
 
 
@@ -121,7 +121,7 @@ public final class UIUtils {
      * @return newly created font
      */
     public static Font createFont(int style, int relSize) {
-        Display display = RBEPlugin.getDefault().getWorkbench().getDisplay();
+        Display display = PlatformUI.getWorkbench().getDisplay();
         FontData[] fontData = display.getSystemFont().getFontData();
         for (int i = 0; i < fontData.length; i++) {
             fontData[i].setHeight(fontData[i].getHeight() + relSize);
@@ -136,7 +136,7 @@ public final class UIUtils {
      * @return newly created cursor
      */
     public static Cursor createCursor(int style) {
-        Display display = RBEPlugin.getDefault().getWorkbench().getDisplay();
+        Display display = PlatformUI.getWorkbench().getDisplay();
         return new Cursor(display, style);
     }
     
@@ -146,8 +146,7 @@ public final class UIUtils {
      * @return system color
      */
     public static Color getSystemColor(int colorId) {
-        return RBEPlugin.getDefault().getWorkbench()
-                .getDisplay().getSystemColor(colorId);
+        return PlatformUI.getWorkbench().getDisplay().getSystemColor(colorId);
     }
     
     /**
