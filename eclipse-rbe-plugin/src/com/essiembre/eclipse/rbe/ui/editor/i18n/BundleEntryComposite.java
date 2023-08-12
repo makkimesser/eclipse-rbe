@@ -75,6 +75,7 @@ import com.essiembre.eclipse.rbe.ui.editor.resources.SourceEditor;
  * Represents a data entry section for a bundle entry.
  * @author Pascal Essiembre
  * @author cuhiodtick
+ * 2023-08-12 Gro Fallback to language if country is undefined, fallback to GB, if locale is undefined
  */
 public class BundleEntryComposite extends Composite {
 
@@ -679,10 +680,21 @@ public class BundleEntryComposite extends Composite {
     private Image loadCountryIcon(Locale countryLocale) {
         Image image = null;
         String countryCode = null;
-        if (countryLocale != null && countryLocale.getCountry() != null) {
-            countryCode = countryLocale.getCountry().toLowerCase();
+
+        // Try fallback to language, if country is undefined
+        if (countryLocale != null) {
+            String country = countryLocale.getCountry();
+            if (isNullOrBlank(country)) {
+                country = countryLocale.getLanguage();
+            }
+            if (!isNullOrBlank(country)) {
+                countryCode = country.toLowerCase();
+            }
+        } else {
+            countryCode = "gb";
         }
-        if (countryCode != null && countryCode.length() > 0) {
+
+        if (!isNullOrBlank(countryCode)) {
             String imageName = "countries/" +
             countryCode.toLowerCase() + ".gif";
             image = UIUtils.getImage(imageName);
@@ -691,6 +703,11 @@ public class BundleEntryComposite extends Composite {
             image = UIUtils.getImage("countries/blank.gif");
         }
         return image;
+    }
+
+    private boolean isNullOrBlank(String strg) {
+
+        return strg == null || strg.isBlank();
     }
 
     /*default*/ void resetCommented() {
