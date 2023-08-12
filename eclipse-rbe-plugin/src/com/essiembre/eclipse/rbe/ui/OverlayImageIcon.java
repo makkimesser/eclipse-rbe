@@ -17,12 +17,13 @@ package com.essiembre.eclipse.rbe.ui;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
+//import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * 
+ *
  * @author Pascal Essiembre
+ * 2023-08-12 Gro Replaced deprecated code
  */
 public class OverlayImageIcon extends CompositeImageDescriptor {
 
@@ -52,37 +53,30 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
         this.overlayImage = overlayImage;
         this.location = location;
         this.imgSize = new Point(
-                baseImage.getImageData().width, 
+                baseImage.getImageData().width,
                 baseImage.getImageData().height);
     }
 
     @Override
     protected void drawCompositeImage(int width, int height) {
+
+        CachedImageDataProvider provider = createCachedImageDataProvider(baseImage);
+        drawImage(provider, 0,0);
+
         // Draw the base image
-        drawImage(baseImage.getImageData(), 0, 0); 
-        ImageData imageData = overlayImage.getImageData();
-        switch(location) {
+        provider = createCachedImageDataProvider(overlayImage);
+
+        switch (location) {
             // Draw on the top left corner
-            case TOP_LEFT:
-                drawImage(imageData, 0, 0);
-                break;
-            
-            // Draw on top right corner  
-            case TOP_RIGHT:
-                drawImage(imageData, imgSize.x - imageData.width, 0);
-                break;
-            
-            // Draw on bottom left  
-            case BOTTOM_LEFT:
-                drawImage(imageData, 0, imgSize.y - imageData.height);
-                break;
-            
-            // Draw on bottom right corner  
-            case BOTTOM_RIGHT:
-                drawImage(imageData, imgSize.x - imageData.width,
-                        imgSize.y - imageData.height);
-                break;
-            
+            case TOP_LEFT -> drawImage(provider, 0,0);
+            // Draw on top right corner
+            case TOP_RIGHT -> drawImage(provider, imgSize.x - provider.getWidth(), 0);
+            // Draw on bottom left
+            case BOTTOM_LEFT -> drawImage(provider, 0, imgSize.y - provider.getHeight());
+            // Draw on bottom right corner
+            case BOTTOM_RIGHT -> drawImage(provider, imgSize.x - provider.getWidth(),
+                imgSize.y - provider.getHeight());
+            default -> throw new RuntimeException("Unexpected location: " + location);
         }
     }
 
@@ -90,5 +84,4 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
     protected Point getSize() {
         return imgSize;
     }
-
 }
