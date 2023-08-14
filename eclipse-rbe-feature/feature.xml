@@ -218,10 +218,6 @@
    limitations under the License.
    </license>
 
-   <url>
-      <update label="ResourceBundle Editor Update Site" url="https://raw.githubusercontent.com/essiembre/eclipse-rbe/master/eclipse-rbe-update-site/site.xml"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <category-def name="com.essiembre.eclipse.rbe" label="RBE">
+      <description>
+         RBE-Plugin
+      </description>
+   </category-def>
+   <category-def name="com.essiembre.eclipse.rbe.sources" label="RBE-Sources">
+      <description>
+         RBE-Plugin Sources
+      </description>
+   </category-def>
+   <feature id="com.essiembre.eclipse.rbe"><category name="com.essiembre.eclipse.rbe"/></feature>
+   <feature id="com.essiembre.eclipse.rbe.source"><category name="com.essiembre.eclipse.rbe.sources"/></feature>
+</site>
